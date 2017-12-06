@@ -1,0 +1,83 @@
+#!/usr/bin/perl
+
+($op = shift) || die "Usage: relink perlexpr [filenames]\n";
+
+if (!@ARGV) {
+    @ARGV = <STDIN>;
+    chop(@ARGV);
+}
+for (@ARGV) {
+    next unless -l;		# symbolic link?
+    $name = $_;
+    $_ = readlink($_);
+    $was = $_;
+    eval $op;
+    die $@ if $@;
+    if ($was ne $_) {
+	unlink($name);
+	symlink($_, $name);
+    }
+}
+
+__END__
+
+=head1 NAME
+
+relink - relinks multiple symbolic links
+
+=head1 SYNOPSIS
+
+ relink perlexpr [symlinknames]
+
+=head1 DESCRIPTION
+
+B<Relink> relinks the symbolic links given according to the rule specified as
+the first argument.  The argument is a Perl expression which is expected to
+modify the $_ string in Perl for at least some of the names specified.
+
+For each symbolic link named on the command line, the Perl expression will be
+executed on the contents of the symbolic link with that name.  If a given
+symbolic link's contents is not modified by the expression, it will not be
+changed.  
+
+If a name given on the command line is not a symbolic link, it will be ignored.
+If no names are given on the command line, names will be read via standard
+input.
+
+For example, to relink all symbolic links in the current directory pointing to
+somewhere in X11R3 so that they point to X11R4, you might say
+
+ relink 's/X11R3/X11R4/' *
+
+To change all occurences of links in the system from /usr/spool to /var/spool,
+you'd say
+
+ find / -type l -print | relink 's#/usr/spool#/var/spool#'
+
+=head1 ENVIRONMENT
+
+No environment variables are used.
+
+=head1 FILES
+
+None.
+
+=head1 AUTHOR
+
+Larry Wall
+
+=head1 SEE ALSO
+
+ ln(1), perl(1)
+
+=head1 DIAGNOSTICS
+
+If you give an invalid Perl expression you'll get a syntax error.
+
+=head1 RCS
+
+ $Id: relink,v 1.1 1998/06/11 14:50:21 rik Exp $
+
+=cut
+
+# EOF

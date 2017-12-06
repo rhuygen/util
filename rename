@@ -1,0 +1,74 @@
+#!/usr/bin/perl
+
+($op = shift) || die "Usage: rename perlexpr [filename...]\n";
+if (!@ARGV) {
+    @ARGV = <STDIN>;
+    chop(@ARGV);
+}
+for (@ARGV) {
+    $was = $_;
+    eval $op;
+    die $@ if $@;
+    rename($was,$_) unless $was eq $_;
+}
+
+__END__
+
+=head1 NAME
+
+rename - renames multiple files
+
+=head1 SYNOPSIS
+
+ rename perlexpr [files]
+
+=head1 DESCRIPTION
+
+Rename renames the filenames supplied according to the rule specified as the
+first argument.  The argument is a Perl expression which is expected to modify
+the $_ string in Perl for at least some of the filenames specified.  If a given
+filename is not modified by the expression, it will not be renamed.
+
+If no filenames are given on the command line, filenames will be read via
+standard input.
+
+For example, to rename all files matching *.bak to strip the extension, you
+might say
+
+   rename 's/\e.bak$//' *.bak
+
+To translate uppercase names to lower, you'd use
+
+   rename 'y/A-Z/a-z/' *
+
+=head1 ENVIRONMENT
+
+No environment variables are used.
+
+=head1 FILES
+
+None.
+
+=head1 AUTHOR
+
+Larry Wall
+
+=head1 SEE ALSO
+
+ mv(1), perl(1)
+
+=head1 DIAGNOSTICS
+
+If you give an invalid Perl expression you'll get a syntax error.
+
+=head1 BUGS 
+
+Rename does not check for the existence of target filenames, so use with care.
+
+=head1 RCS
+
+ $Id: rename,v 1.2 1998/06/11 14:48:27 rik Exp $
+
+=cut
+
+# EOF
