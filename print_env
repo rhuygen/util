@@ -1,0 +1,41 @@
+#!/usr/bin/perl
+
+use Getopt::Std;
+
+my (%opts);
+
+getopts ('hip:', \%opts);
+
+if ($opts{h} ) {
+  print "usage: print_env [-hi] [pattern]\n";
+  print "       print_env -p <path variable>\n";
+  exit 0;
+}
+
+$flags  = 'o';
+$flags .= 'i' if $opts{i};
+
+if ($#ARGV == -1 ) {
+  $pattern = '.*'; 
+}
+else {
+  $pattern = $ARGV[0];
+}
+
+if ($opts{p}) {
+  my ($path) = $ENV{$opts{p}};
+
+  print $opts{p}, " (variable is split)\n";
+
+  foreach $d (split ':', $path) {
+    print "\t", $d, "\n";
+  }
+
+  exit 0;
+}
+
+eval <<LOOP_END;
+  foreach (sort keys %ENV) {
+    printf "%-20s: %s\n", \$_, \$ENV{\$_} if /$pattern/$flags;
+  }
+LOOP_END
