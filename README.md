@@ -1,6 +1,10 @@
 # util
 
-A collection of useful scripts. Use ``perldoc <command>`` to see the documentation for the scripts.
+A collection of useful scripts. 
+
+## Perl scripts
+
+Use ``perldoc <command>`` to see the documentation for the scripts.
 
 **mg** - mygrep is a grep replacement with some interesting options.
 
@@ -9,3 +13,10 @@ A collection of useful scripts. Use ``perldoc <command>`` to see the documentati
 **rename** - rename multiple files with a regex
 
 **relink** - relink multiple symbolic links with a regex
+
+## Python scripts
+
+Use the ``-h`` or ``--help`` option to see the documentation for these scripts.
+
+**cmpdir** - compare directories
+ 
